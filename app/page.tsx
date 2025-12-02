@@ -1,66 +1,49 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { auth } from "@/auth";
+import SignIn from "@/components/SignIn";
+import SignOut from "@/components/SignOut";
 
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+
+export default async function HomePage() {
+    const session = await auth();
+
+    return (
+        <main className="min-h-screen flex flex-col bg-gradient-to-b from-[#E3E3E3] to-[#E3E3E3]">
+            <header className="px-8 py-6 text-2xl font-semibold tracking-tight text-gray-900">
+                CS391 OAuth
+            </header>
+
+            <section className="flex-1 flex items-center justify-center px-4">
+                <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-violet-100 px-10 py-10 text-center">
+                    <h1 className="text-2xl font-bold mb-2 tracking-tight text-gray-900">
+                        OAuth Demo
+                    </h1>
+
+                    {!session ? (
+                        <SignIn />
+                    ) : (
+                        <div className="space-y-4">
+                            {session.user?.image && (
+                                <img
+                                    src={session.user.image}
+                                    alt="Profile"
+                                    className="w-24 h-24 rounded-full mx-auto border-4 border-gray-200"
+                                />
+                            )}
+                            {session.user?.name && (
+                                <h2 className="text-xl font-semibold text-gray-900">
+                                    {session.user.name}
+                                </h2>
+                            )}
+                            {session.user?.email && (
+                                <p className="text-gray-600">
+                                    {session.user.email}
+                                </p>
+                            )}
+                            <SignOut />
+                        </div>
+                    )}
+                </div>
+            </section>
+        </main>
+    );
 }
